@@ -3,4 +3,4 @@
 	url = https://github.com/woodser/monero
 [submodule "external/beldex-project"]
 	path = external/beldex-project
-	url = https://github.com/victor-tucci/beldex-cpp.git
+	url = https://github.com/victor-tucci/beldex.git
