@@ -55,7 +55,7 @@
 #define gen_utils_h
 
 #include <boost/lexical_cast.hpp>
-#include "include_base_utils.h"
+#include "epee/include_base_utils.h"
 #include "common/util.h"
 
 /**
