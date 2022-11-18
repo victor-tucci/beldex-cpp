@@ -4,3 +4,6 @@
 [submodule "external/beldex-project"]
 	path = external/beldex-project
 	url = https://github.com/victor-tucci/beldex.git
+[submodule "external/beldex-core"]
+	path = external/beldex-core
+	url = https://github.com/victor-tucci/beldex.git
