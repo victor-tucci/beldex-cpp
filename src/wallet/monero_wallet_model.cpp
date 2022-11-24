@@ -167,7 +167,7 @@ namespace monero {
         uint32_t network_type_num = it->second.get_value<uint32_t>();
         if (network_type_num == 0) config->m_network_type = monero_network_type::MAINNET;
         else if (network_type_num == 1) config->m_network_type = monero_network_type::TESTNET;
-        else if (network_type_num == 2) config->m_network_type = monero_network_type::STAGENET;
+        else if (network_type_num == 2) config->m_network_type = monero_network_type::DEVNET;
         else throw std::runtime_error("Invalid network type number: " + std::to_string(network_type_num));
       }
       else if (key == std::string("serverUri")) config->m_server_uri = it->second.data();
@@ -1355,10 +1355,10 @@ namespace monero {
       else if (key == std::string("paymentId")) config->m_payment_id = it->second.data();
       else if (key == std::string("priority")) {
         uint32_t priority_num = it->second.get_value<uint32_t>();
-        if (priority_num == 0) config->m_priority = monero_tx_priority::DEFAULT;
+        if (priority_num == 0) config->m_priority = monero_tx_priority::FLASH;
         else if (priority_num == 1) config->m_priority = monero_tx_priority::UNIMPORTANT;
-        else if (priority_num == 2) config->m_priority = monero_tx_priority::NORMAL;
-        else if (priority_num == 3) config->m_priority = monero_tx_priority::ELEVATED;
+        // else if (priority_num == 2) config->m_priority = monero_tx_priority::NORMAL;
+        // else if (priority_num == 3) config->m_priority = monero_tx_priority::ELEVATED;
         else throw std::runtime_error("Invalid priority number: " + std::to_string(priority_num));
       }
       else if (key == std::string("ringSize")) config->m_ring_size = it->second.get_value<uint32_t>();
@@ -1435,15 +1435,15 @@ namespace monero {
 
     // set bool values
     monero_utils::add_json_member("isGood", m_is_good, allocator, root);
-    monero_utils::add_json_member("isOld", m_is_old, allocator, root);
+    // monero_utils::add_json_member("isOld", m_is_old, allocator, root);
 
     // set num values
-    rapidjson::Value value_num(rapidjson::kNumberType);
-    monero_utils::add_json_member("version", m_version, allocator, root, value_num);
+    // rapidjson::Value value_num(rapidjson::kNumberType);
+    // monero_utils::add_json_member("version", m_version, allocator, root, value_num);
 
     // set string values
-    rapidjson::Value value_str(rapidjson::kStringType);
-    monero_utils::add_json_member("signatureType", m_signature_type == monero_message_signature_type::SIGN_WITH_SPEND_KEY ? std::string("spend") : std::string("view"), allocator, root, value_str);
+    // rapidjson::Value value_str(rapidjson::kStringType);
+    // monero_utils::add_json_member("signatureType", m_signature_type == monero_message_signature_type::SIGN_WITH_SPEND_KEY ? std::string("spend") : std::string("view"), allocator, root, value_str);
 
     // return root
     return root;

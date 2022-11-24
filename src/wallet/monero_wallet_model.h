@@ -362,10 +362,9 @@ namespace monero {
    * Enumerates Monero network types.
    */
   enum monero_tx_priority : uint8_t {
-    DEFAULT = 0,
+    FLASH = 0,
     UNIMPORTANT,
-    NORMAL,
-    ELEVATED
+    DEFAULT =0
   };
 
   /**
@@ -422,9 +421,9 @@ namespace monero {
    */
   struct monero_message_signature_result : public serializable_struct {
     bool m_is_good;
-    uint32_t m_version;
-    bool m_is_old;
-    monero_message_signature_type m_signature_type;
+    // uint32_t m_version;
+    // bool m_is_old;
+    // monero_message_signature_type m_signature_type;
 
     rapidjson::Value to_rapidjson_val(rapidjson::Document::AllocatorType& allocator) const;
   };

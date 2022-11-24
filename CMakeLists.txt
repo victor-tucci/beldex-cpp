@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.4.1)
 
 #SET(CMAKE_C_COMPILER /path/to/c/compiler)
 #SET(CMAKE_CXX_COMPILER /path/to/cpp/compiler)
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -std=c++14 -F/Library/Frameworks -pthread")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -std=c++17 -F/Library/Frameworks -pthread")
 #SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address")
 #SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -std=c++14 -F/Library/Frameworks -pthread -fsanitize=address")    # TODO: way to enable sanitize?  get runtime error with this on
 
@@ -24,7 +24,13 @@ set(MONERO_PROJECT_SRC "${MONERO_PROJECT}/src")
 # header includes
 include_directories(src/)
 include_directories("${MONERO_PROJECT}/contrib/epee/include")
+include_directories("${MONERO_PROJECT}/contrib/epee/include/epee")
 include_directories("${MONERO_PROJECT}/external/")
+include_directories("${MONERO_PROJECT}/external/cpr/include")
+include_directories("${MONERO_PROJECT}/external/ghc-filesystem")
+include_directories("${MONERO_PROJECT}/external/googletest")
+include_directories("${MONERO_PROJECT}/external/miniupnp")
+include_directories("${MONERO_PROJECT}/external/loki-mq")
 include_directories("${MONERO_PROJECT}/external/easylogging++")
 include_directories("${MONERO_PROJECT}/external/rapidjson/include")
 include_directories("${MONERO_PROJECT_SRC}/")
@@ -153,7 +159,7 @@ list(APPEND CMAKE_MODULE_PATH "${MONERO_PROJECT}/cmake")
 
 add_library(wallet STATIC IMPORTED)
 set_target_properties(wallet PROPERTIES IMPORTED_LOCATION
-    ${MONERO_PROJECT_BUILD}/lib/libwallet.a)
+    ${MONERO_PROJECT_BUILD}/src/wallet/libwallet.a)
 
 # libwallet-crypto.a provides x86_64 asm for some wallet functions
 if (EXISTS ${MONERO_PROJECT_BUILD}/src/crypto/wallet/libwallet-crypto.a)
@@ -183,19 +189,19 @@ endif()
 
 add_library(rpc_base STATIC IMPORTED)
 set_target_properties(rpc_base PROPERTIES IMPORTED_LOCATION
-    ${MONERO_PROJECT_BUILD}/src/rpc/librpc_base.a)
+    ${MONERO_PROJECT_BUILD}/src/rpc/librpc_server_base.a)
 
 add_library(net STATIC IMPORTED)
 set_target_properties(net PROPERTIES IMPORTED_LOCATION
     ${MONERO_PROJECT_BUILD}/src/net/libnet.a)
     
-add_library(hardforks STATIC IMPORTED)
-set_target_properties(hardforks PROPERTIES IMPORTED_LOCATION
-    ${MONERO_PROJECT_BUILD}/src/hardforks/libhardforks.a)
+# add_library(hardforks STATIC IMPORTED)
+# set_target_properties(hardforks PROPERTIES IMPORTED_LOCATION
+#     ${MONERO_PROJECT_BUILD}/src/hardforks/libhardforks.a)
     
 add_library(easylogging STATIC IMPORTED)
 set_target_properties(easylogging PROPERTIES IMPORTED_LOCATION
-    ${MONERO_PROJECT_BUILD}/external/easylogging++/libeasylogging.a)
+    ${MONERO_PROJECT_BUILD}/external/easyloggingpp/libeasylogging.a)
 
 add_library(cryptonote_core STATIC IMPORTED)
 set_target_properties(cryptonote_core PROPERTIES IMPORTED_LOCATION
@@ -209,9 +215,9 @@ add_library(cryptonote_basic STATIC IMPORTED)
 set_target_properties(cryptonote_basic PROPERTIES IMPORTED_LOCATION
     ${MONERO_PROJECT_BUILD}/src/cryptonote_basic/libcryptonote_basic.a)
     
-add_library(cryptonote_format_utils_basic STATIC IMPORTED)
-set_target_properties(cryptonote_format_utils_basic PROPERTIES IMPORTED_LOCATION
-    ${MONERO_PROJECT_BUILD}/src/cryptonote_basic/libcryptonote_format_utils_basic.a)
+# add_library(cryptonote_format_utils_basic STATIC IMPORTED)
+# set_target_properties(cryptonote_format_utils_basic PROPERTIES IMPORTED_LOCATION
+#     ${MONERO_PROJECT_BUILD}/src/cryptonote_basic/libcryptonote_format_utils_basic.a)
 
 add_library(mnemonics STATIC IMPORTED)
 set_target_properties(mnemonics PROPERTIES IMPORTED_LOCATION
@@ -237,9 +243,9 @@ add_library(blockchain_db STATIC IMPORTED)
 set_target_properties(blockchain_db PROPERTIES IMPORTED_LOCATION
     ${MONERO_PROJECT_BUILD}/src/blockchain_db/libblockchain_db.a)
 
-add_library(blocks STATIC IMPORTED)
-set_target_properties(blocks PROPERTIES IMPORTED_LOCATION
-    ${MONERO_PROJECT_BUILD}/src/blocks/libblocks.a)
+# add_library(blocks STATIC IMPORTED)
+# set_target_properties(blocks PROPERTIES IMPORTED_LOCATION
+#     ${MONERO_PROJECT_BUILD}/src/blocks/libblocks.a)
 
 add_library(checkpoints STATIC IMPORTED)
 set_target_properties(checkpoints PROPERTIES IMPORTED_LOCATION
@@ -293,14 +299,14 @@ if (BUILD_LIBRARY)
         cryptonote_core
         cryptonote_protocol
         cryptonote_basic
-        cryptonote_format_utils_basic
+        # cryptonote_format_utils_basic
         mnemonics
         ringct
         ringct_basic
         common
         cncrypto
         blockchain_db
-        blocks
+        # blocks
         checkpoints
         device
         device_trezor
@@ -308,7 +314,7 @@ if (BUILD_LIBRARY)
         version
         randomx
         epee
-        hardforks
+        # hardforks
         cncrypto
         ${wallet_crypto}
         
@@ -357,14 +363,14 @@ if (BUILD_SAMPLE)
         cryptonote_core
         cryptonote_protocol
         cryptonote_basic
-        cryptonote_format_utils_basic
+        # cryptonote_format_utils_basic
         mnemonics
         ringct
         ringct_basic
         common
         cncrypto
         blockchain_db
-        blocks
+        # blocks
         checkpoints
         device
         device_trezor
@@ -373,7 +379,7 @@ if (BUILD_SAMPLE)
         randomx
         dl
         epee
-        hardforks
+        # hardforks
         cncrypto
         ${wallet_crypto}
 
@@ -406,14 +412,14 @@ if (BUILD_SCRATCHPAD)
         cryptonote_core
         cryptonote_protocol
         cryptonote_basic
-        cryptonote_format_utils_basic
+        # cryptonote_format_utils_basic
         mnemonics
         ringct
         ringct_basic
         common
         cncrypto
         blockchain_db
-        blocks
+        # blocks
         checkpoints
         device
         device_trezor
@@ -422,7 +428,7 @@ if (BUILD_SCRATCHPAD)
         randomx
         dl
         epee
-        hardforks
+        # hardforks
         cncrypto
         ${wallet_crypto}
         

@@ -59,7 +59,7 @@
 #include "cryptonote_basic/cryptonote_basic.h"
 #include "serialization/keyvalue_serialization.h" // TODO: consolidate with other binary deps?
 #include "storages/portable_storage.h"
-
+#include "serialization/json_archive.h"
 /**
  * Collection of utilities for the Monero library.
  */
@@ -167,9 +167,13 @@ namespace monero_utils
   static std::string get_pruned_tx_json(cryptonote::transaction &tx)
   {
     std::stringstream ss;
-    json_archive<true> ar(ss);
-    bool r = tx.serialize_base(ar);
-    CHECK_AND_ASSERT_MES(r, std::string(), "Failed to serialize rct signatures base");
+    serialization::json_archiver ar(ss);
+    try{
+      tx.serialize_base(ar);
+    }
+    catch(const std::exception& e){
+       LOG_ERROR("Failed to serialize rct signatures base " << e.what());
+    }
     return ss.str();
   }
 

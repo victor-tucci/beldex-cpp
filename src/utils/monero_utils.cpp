@@ -58,6 +58,7 @@
 #include "mnemonics/english.h"
 #include "string_tools.h"
 #include "byte_stream.h"
+#include <variant>
 
 using namespace cryptonote;
 using namespace monero_utils;
@@ -142,9 +143,11 @@ void monero_utils::validate_private_spend_key(const std::string& private_spend_k
 void monero_utils::json_to_binary(const std::string &json, std::string &bin) {
   epee::serialization::portable_storage ps;
   ps.load_from_json(json);
-  epee::byte_stream bs;
+  // epee::byte_stream bs;
+  std::string bs;
   ps.store_to_binary(bs);
-  bin = std::string((char*) bs.data(), bs.size());
+  // bin = std::string((char*) bs.data(), bs.size());
+  bin = bs;
 }
 
 void monero_utils::binary_to_json(const std::string &bin, std::string &json) {
@@ -156,7 +159,7 @@ void monero_utils::binary_to_json(const std::string &bin, std::string &json) {
 void monero_utils::binary_blocks_to_json(const std::string &bin, std::string &json) {
 
   // load binary rpc response to struct
-  cryptonote::COMMAND_RPC_GET_BLOCKS_BY_HEIGHT::response resp_struct;
+  cryptonote::rpc::GET_BLOCKS_BY_HEIGHT::response resp_struct;
   epee::serialization::load_t_from_binary(resp_struct, bin);
 
   // build property tree from deserialized blocks and transactions
@@ -181,7 +184,7 @@ void monero_utils::binary_blocks_to_json(const std::string &bin, std::string &js
     boost::property_tree::ptree txs_node;
     for (int txIdx = 0; txIdx < resp_struct.blocks[blockIdx].txs.size(); txIdx++) {
       cryptonote::transaction tx;
-      if (cryptonote::parse_and_validate_tx_from_blob(resp_struct.blocks[blockIdx].txs[txIdx].blob, tx)) {
+      if (cryptonote::parse_and_validate_tx_from_blob(resp_struct.blocks[blockIdx].txs[txIdx], tx)) {
 
         // add tx node to txs node
         boost::property_tree::ptree txNode;
@@ -323,23 +326,23 @@ std::shared_ptr<monero_block> monero_utils::cn_block_to_block(const cryptonote::
 
 std::shared_ptr<monero_tx> monero_utils::cn_tx_to_tx(const cryptonote::transaction& cn_tx, bool init_as_tx_wallet) {
   std::shared_ptr<monero_tx> tx = init_as_tx_wallet ? std::make_shared<monero_tx_wallet>() : std::make_shared<monero_tx>();
-  tx->m_version = cn_tx.version;
+  tx->m_version = static_cast<uint32_t>(cn_tx.version);
   tx->m_unlock_height = cn_tx.unlock_time;
   tx->m_hash = epee::string_tools::pod_to_hex(cn_tx.hash);
   tx->m_extra = cn_tx.extra;
 
   // init inputs
-  for (const txin_v& cnVin : cn_tx.vin) {
-    if (cnVin.which() != 0 && cnVin.which() != 3) throw std::runtime_error("Unsupported variant type");
-    if (tx->m_is_miner_tx == boost::none) tx->m_is_miner_tx = cnVin.which() == 0;
-    if (cnVin.which() != 3) continue; // only process txin_to_key of variant  TODO: support other types, like 0 "gen" which is miner tx?
+  for (auto const &cnVin : cn_tx.vin) {
+    // if (cnVin.which() != 0 && cnVin.which() != 3) throw std::runtime_error("Unsupported variant type");
+    // if (tx->m_is_miner_tx == boost::none) tx->m_is_miner_tx = cnVin.which() == 0;
+    // if (cnVin.which() != 3) continue; // only process txin_to_key of variant  TODO: support other types, like 0 "gen" which is miner tx?
     std::shared_ptr<monero_output> input = init_as_tx_wallet ? std::make_shared<monero_output_wallet>() : std::make_shared<monero_output>();
     input->m_tx = tx;
     tx->m_inputs.push_back(input);
-    const txin_to_key& txin = boost::get<txin_to_key>(cnVin);
-    input->m_amount = txin.amount;
-    input->m_ring_output_indices = txin.key_offsets;
-    crypto::key_image cnKeyImage = txin.k_image;
+    cryptonote::txin_to_key const* const txin = std::get_if<cryptonote::txin_to_key>(std::addressof(cnVin));
+    input->m_amount = txin->amount;
+    input->m_ring_output_indices = txin->key_offsets;
+    crypto::key_image cnKeyImage = txin->k_image;
     input->m_key_image = std::make_shared<monero_key_image>();
     input->m_key_image.get()->m_hex = epee::string_tools::pod_to_hex(cnKeyImage);
   }
@@ -350,7 +353,7 @@ std::shared_ptr<monero_tx> monero_utils::cn_tx_to_tx(const cryptonote::transacti
     output->m_tx = tx;
     tx->m_outputs.push_back(output);
     output->m_amount = cnVout.amount;
-    const crypto::public_key& cnStealthPublicKey = boost::get<txout_to_tagged_key>(cnVout.target).key;
+    const crypto::public_key& cnStealthPublicKey = var::get<cryptonote::txout_to_key>(cnVout.target).key;
     output->m_stealth_public_key = epee::string_tools::pod_to_hex(cnStealthPublicKey);
   }
 

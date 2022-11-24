@@ -57,6 +57,7 @@
 #include "rapidjson/document.h"
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
+#include "cryptonote_basic/cryptonote_basic.h"
 
 /**
  * Public interface for libmonero-cpp library.
@@ -90,7 +91,7 @@ namespace monero {
   enum monero_network_type : uint8_t {
       MAINNET = 0,
       TESTNET,
-      STAGENET
+      DEVNET
   };
 
   /**

@@ -24,7 +24,7 @@ int main(int argc, const char* argv[]) {
   monero_wallet* wallet_restored = monero_wallet_full::create_wallet_from_mnemonic(
       "MyWalletRestored",                   // wallet path and name
       "supersecretpassword123",             // wallet password
-      monero_network_type::STAGENET,        // network type
+      monero_network_type::DEVNET,        // network type
       mnemonic,                             // mnemonic phrase
       monero_rpc_connection(                // daemon connection
           string("http://localhost:38081"),
@@ -76,7 +76,7 @@ int main(int argc, const char* argv[]) {
   monero_wallet* wallet_random = monero_wallet_full::create_wallet_random(
       "MyWalletRandom",                     // wallet path and name
       "supersecretpassword123",             // wallet password
-      monero_network_type::STAGENET,        // network type
+      monero_network_type::DEVNET,        // network type
       monero_rpc_connection(                // daemon connection
           string("http://localhost:38081"),
           string("superuser"),
