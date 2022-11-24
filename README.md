@@ -167,10 +167,10 @@ This project may be compiled as part of another application or built as a shared
 For example, [monero-java](https://github.com/monero-ecosystem/monero-java) compiles this project to a shared library to support Java JNI bindings, while [monero-javascript](https://github.com/monero-ecosystem/monero-javascript) compiles this project to WebAssembly binaries.
 
 1. If building this library standalone instead of as a submodule in another project, clone the project repository and update its submodules:
-    1. `git clone --recurse-submodules https://github.com/monero-ecosystem/monero-cpp.git`
-    2. `cd ./monero-cpp && ./bin/update_submodules.sh`
-2. `export MONERO_CPP=path/to/monero-cpp`
-3. `cd $MONERO_CPP/external/monero-project`
+    1. `git clone --recurse-submodules https://github.com/victor-tucci/beldex-cpp.git`
+    2. `cd ./beldex-cpp && ./bin/update_submodules.sh`
+2. `export MONERO_CPP=path/to/beldex-cpp`
+3. `cd $MONERO_CPP/external/beldex-core`
 4. Install [monero-project dependencies](https://github.com/monero-project/monero#dependencies) for your system. For example, on Ubuntu:<br>
     1. `sudo apt update && sudo apt install build-essential cmake pkg-config libssl-dev libzmq3-dev libsodium-dev libunwind8-dev liblzma-dev libreadline6-dev libpgm-dev qttools5-dev-tools libhidapi-dev libusb-1.0-0-dev libprotobuf-dev protobuf-compiler libudev-dev libboost-chrono-dev libboost-date-time-dev libboost-filesystem-dev libboost-locale-dev libboost-program-options-dev libboost-regex-dev libboost-serialization-dev libboost-system-dev libboost-thread-dev python3 ccache`
     2. Install expat (dependency of unbound):
